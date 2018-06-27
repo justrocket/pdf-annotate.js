@@ -71,6 +71,9 @@ function createEditOverlay(target) {
   document.addEventListener('keyup', handleDocumentKeyup);
   document.addEventListener('mousedown', handleDocumentMousedown);
   anchor.addEventListener('click', deleteAnnotation);
+  var auth = JSON.parse(localStorage.getItem("auth"));
+  if(target.getAttribute("username") !== auth.username)
+    anchor.style.visibility = 'hidden';
   anchor.addEventListener('mouseover', () => {
     anchor.style.color = '#35A4DC';
     anchor.style.borderColor = '#999';
@@ -171,8 +174,12 @@ function handleDocumentMousedown(e) {
   let annotationId = overlay.getAttribute('data-target-id');
   let target = document.querySelector(`[data-pdf-annotate-id="${annotationId}"]`);
   let type = target.getAttribute('data-pdf-annotate-type');
+  var username = target.getAttribute('username');
+  var auth = JSON.parse(localStorage.getItem("auth"));
 
-  if (type === 'highlight' || type === 'strikeout') { return; }
+  if (type === 'highlight' || type === 'strikeout' || username !== auth.username) {
+    return;
+  }
 
   isDragging = true;
   dragOffsetX = e.clientX;
