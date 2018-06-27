@@ -14,10 +14,11 @@ let clickNode;
  * @param {Event} e The DOM event to be handled
  */
 document.addEventListener('click', function handleDocumentClick(e) {
-  if (!findSVGAtPoint(e.clientX, e.clientY)) { return; }
+  if (!findSVGAtPoint(e.clientX, e.clientY)) {
+    return;
+  }
 
   let target = findAnnotationAtPoint(e.clientX, e.clientY);
-
   // Emit annotation:blur if clickNode is no longer clicked
   if (clickNode && clickNode !== target) {
     emitter.emit('annotation:blur', clickNode);
@@ -48,6 +49,14 @@ document.addEventListener('click', function handleDocumentClick(e) {
 //   mouseOverNode = target;
 // });
 
-export function fireEvent() { emitter.emit(...arguments); };
-export function addEventListener() { emitter.on(...arguments); };
-export function removeEventListener() { emitter.removeListener(...arguments); };
+export function fireEvent() {
+  emitter.emit(...arguments);
+};
+
+export function addEventListener() {
+  emitter.on(...arguments);
+};
+
+export function removeEventListener() {
+  emitter.removeListener(...arguments);
+};

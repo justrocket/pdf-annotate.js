@@ -2,12 +2,14 @@ import createStyleSheet from 'create-stylesheet';
 
 export const BORDER_COLOR = '#00BFFF';
 
+const isFirefox = /Firefox/i.test(navigator.userAgent);
+
 const userSelectStyleSheet = createStyleSheet({
   body: {
     '-webkit-user-select': 'none',
-       '-moz-user-select': 'none',
-        '-ms-user-select': 'none',
-            'user-select': 'none'
+    '-moz-user-select': 'none',
+    '-ms-user-select': 'none',
+    'user-select': 'none'
   }
 });
 userSelectStyleSheet.setAttribute('data-pdf-annotate-user-select', 'true');
@@ -22,9 +24,9 @@ export function findSVGContainer(node) {
   let parentNode = node;
 
   while ((parentNode = parentNode.parentNode) &&
-          parentNode !== document) {
+  parentNode !== document) {
     if (parentNode.nodeName.toUpperCase() === 'SVG' &&
-        parentNode.getAttribute('data-pdf-annotate-container') === 'true') {
+      parentNode.getAttribute('data-pdf-annotate-container') === 'true') {
       return parentNode;
     }
   }
@@ -42,7 +44,7 @@ export function findSVGContainer(node) {
 export function findSVGAtPoint(x, y) {
   let elements = document.querySelectorAll('svg[data-pdf-annotate-container="true"]');
 
-  for (let i=0, l=elements.length; i<l; i++) {
+  for (let i = 0, l = elements.length; i < l; i++) {
     let el = elements[i];
     let rect = el.getBoundingClientRect();
 
@@ -64,13 +66,15 @@ export function findSVGAtPoint(x, y) {
  */
 export function findAnnotationAtPoint(x, y) {
   let svg = findSVGAtPoint(x, y);
-  if (!svg) { return; }
+  if (!svg) {
+    return;
+  }
   let elements = svg.querySelectorAll('[data-pdf-annotate-type]');
 
   // Find a target element within SVG
-  for (let i=0, l=elements.length; i<l; i++) {
+  for (let i = 0, l = elements.length; i < l; i++) {
     let el = elements[i];
-    if (pointIntersectsRect(x, y, getOffsetAnnotationRect(el))) {   
+    if (pointIntersectsRect(x, y, getOffsetAnnotationRect(el))) {
       return el;
     }
   }
@@ -98,7 +102,7 @@ export function pointIntersectsRect(x, y, rect) {
  */
 export function getOffsetAnnotationRect(el) {
   let rect = getAnnotationRect(el);
-  let { offsetLeft, offsetTop } = getOffset(el);
+  let {offsetLeft, offsetTop} = getOffset(el);
   return {
     top: rect.top + offsetTop,
     left: rect.left + offsetLeft,
@@ -121,62 +125,70 @@ export function getAnnotationRect(el) {
 
   switch (el.nodeName.toLowerCase()) {
     case 'path':
-    let minX, maxX, minY, maxY;
+      let minX, maxX, minY, maxY;
 
-    el.getAttribute('d').replace(/Z/, '').split('M').splice(1).forEach((p) => {
-      var s = p.split(' ').map(i => parseInt(i, 10));
+      el.getAttribute('d').replace(/Z/, '').split('M').splice(1).forEach((p) => {
+        var s = p.split(' ').map(i => parseInt(i, 10));
 
-      if (typeof minX === 'undefined' || s[0] < minX) { minX = s[0]; }
-      if (typeof maxX === 'undefined' || s[2] > maxX) { maxX = s[2]; }
-      if (typeof minY === 'undefined' || s[1] < minY) { minY = s[1]; }
-      if (typeof maxY === 'undefined' || s[3] > maxY) { maxY = s[3]; }
-    });
+        if (typeof minX === 'undefined' || s[0] < minX) {
+          minX = s[0];
+        }
+        if (typeof maxX === 'undefined' || s[2] > maxX) {
+          maxX = s[2];
+        }
+        if (typeof minY === 'undefined' || s[1] < minY) {
+          minY = s[1];
+        }
+        if (typeof maxY === 'undefined' || s[3] > maxY) {
+          maxY = s[3];
+        }
+      });
 
-    h = maxY - minY;
-    w = maxX - minX;
-    x = minX;
-    y = minY;
-    break;
+      h = maxY - minY;
+      w = maxX - minX;
+      x = minX;
+      y = minY;
+      break;
 
     case 'line':
-    h = parseInt(el.getAttribute('y2'), 10) - parseInt(el.getAttribute('y1'), 10);
-    w = parseInt(el.getAttribute('x2'), 10) - parseInt(el.getAttribute('x1'), 10);
-    x = parseInt(el.getAttribute('x1'), 10);
-    y = parseInt(el.getAttribute('y1'), 10);
+      h = parseInt(el.getAttribute('y2'), 10) - parseInt(el.getAttribute('y1'), 10);
+      w = parseInt(el.getAttribute('x2'), 10) - parseInt(el.getAttribute('x1'), 10);
+      x = parseInt(el.getAttribute('x1'), 10);
+      y = parseInt(el.getAttribute('y1'), 10);
 
-    if (h === 0) {
-      h += LINE_OFFSET;
-      y -= (LINE_OFFSET / 2);
-    }
-    break;
+      if (h === 0) {
+        h += LINE_OFFSET;
+        y -= (LINE_OFFSET / 2);
+      }
+      break;
 
     case 'text':
-    h = rect.height;
-    w = rect.width;
-    x = parseInt(el.getAttribute('x'), 10);
-    y = parseInt(el.getAttribute('y'), 10) - h;
-    break;
+      h = rect.height;
+      w = rect.width;
+      x = parseInt(el.getAttribute('x'), 10);
+      y = parseInt(el.getAttribute('y'), 10) - h;
+      break;
 
     case 'g':
-    let { offsetLeft, offsetTop } = getOffset(el);
-    h = rect.height;
-    w = rect.width;
-    x = rect.left - offsetLeft;
-    y = rect.top - offsetTop;
+      let {offsetLeft, offsetTop} = getOffset(el);
+      h = rect.height;
+      w = rect.width;
+      x = rect.left - offsetLeft;
+      y = rect.top - offsetTop;
 
-    if (el.getAttribute('data-pdf-annotate-type') === 'strikeout') {
-      h += LINE_OFFSET;
-      y -= (LINE_OFFSET / 2);
-    }
-    break;
+      if (el.getAttribute('data-pdf-annotate-type') === 'strikeout') {
+        h += LINE_OFFSET;
+        y -= (LINE_OFFSET / 2);
+      }
+      break;
 
     case 'rect':
     case 'svg':
-    h = parseInt(el.getAttribute('height'), 10);
-    w = parseInt(el.getAttribute('width'), 10);
-    x = parseInt(el.getAttribute('x'), 10);
-    y = parseInt(el.getAttribute('y'), 10);
-    break;
+      h = parseInt(el.getAttribute('height'), 10);
+      w = parseInt(el.getAttribute('width'), 10);
+      x = parseInt(el.getAttribute('x'), 10);
+      y = parseInt(el.getAttribute('y'), 10);
+      break;
   }
 
   // Result provides same properties as getBoundingClientRect
@@ -193,7 +205,7 @@ export function getAnnotationRect(el) {
   // lines or rects no adjustment needs to be made for scale.
   // I assume that the scale is already being handled
   // natively by virtue of the `transform` attribute.
-  if (!['svg', 'g'].includes(el.nodeName.toLowerCase())) {
+  if (!['svg', 'g'].includes(el.nodeName.toLowerCase()) || isFirefox) {
     result = scaleUp(findSVGAtPoint(rect.left, rect.top), result);
   }
 
@@ -209,7 +221,7 @@ export function getAnnotationRect(el) {
  */
 export function scaleUp(svg, rect) {
   let result = {};
-  let { viewport } = getMetadata(svg);
+  let {viewport} = getMetadata(svg);
 
   Object.keys(rect).forEach((key) => {
     result[key] = rect[key] * viewport.scale;
@@ -227,7 +239,7 @@ export function scaleUp(svg, rect) {
  */
 export function scaleDown(svg, rect) {
   let result = {};
-  let { viewport } = getMetadata(svg);
+  let {viewport} = getMetadata(svg);
 
   Object.keys(rect).forEach((key) => {
     result[key] = rect[key] / viewport.scale;
@@ -248,12 +260,12 @@ export function getScroll(el) {
   let parentNode = el;
 
   while ((parentNode = parentNode.parentNode) &&
-          parentNode !== document) {
+  parentNode !== document) {
     scrollTop += parentNode.scrollTop;
     scrollLeft += parentNode.scrollLeft;
   }
 
-  return { scrollTop, scrollLeft };
+  return {scrollTop, scrollLeft};
 }
 
 /**
@@ -266,7 +278,7 @@ export function getOffset(el) {
   let parentNode = el;
 
   while ((parentNode = parentNode.parentNode) &&
-          parentNode !== document) {
+  parentNode !== document) {
     if (parentNode.nodeName.toUpperCase() === 'SVG') {
       break;
     }
@@ -274,7 +286,7 @@ export function getOffset(el) {
 
   let rect = parentNode.getBoundingClientRect();
 
-  return { offsetLeft: rect.left, offsetTop: rect.top };
+  return {offsetLeft: rect.left, offsetTop: rect.top};
 }
 
 /**
