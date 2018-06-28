@@ -330,7 +330,7 @@ function handleDocumentMouseup(e) {
         annotation.lines[i][0] = x + deltaX;
         annotation.lines[i][1] = y + deltaY;
       });
-
+      
       target[0].parentNode.removeChild(target[0]);
       appendChild(svg, annotation);
     }
