@@ -249,6 +249,13 @@ function handleDocumentMouseup(e) {
   }
 
   function calcDelta(x, y) {
+    console.log(scaleDown(svg, {x: overlay.offsetLeft}).x - x);
+    //firefox fix for moving offset
+    if (isFirefox)
+      return {
+        deltaX: scaleDown(svg, {x: overlay.offsetLeft - 2 * OVERLAY_BORDER_SIZE}).x - x,
+        deltaY: scaleDown(svg, {y: overlay.offsetTop - 2 * OVERLAY_BORDER_SIZE}).y - y
+      };
     return {
       deltaX: OVERLAY_BORDER_SIZE + scaleDown(svg, {x: overlay.offsetLeft}).x - x,
       deltaY: OVERLAY_BORDER_SIZE + scaleDown(svg, {y: overlay.offsetTop}).y - y
@@ -314,7 +321,6 @@ function handleDocumentMouseup(e) {
       let rect = scaleDown(svg, getAnnotationRect(target[0]));
       let [originX, originY] = annotation.lines[0];
       let {deltaX, deltaY} = calcDelta(originX, originY);
-
       // origin isn't necessarily at 0/0 in relation to overlay x/y
       // adjust the difference between overlay and drawing coords
       deltaY += (originY - rect.top);
