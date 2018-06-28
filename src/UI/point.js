@@ -88,6 +88,8 @@ function savePoint() {
         );
 
         appendChild(svg, annotation);
+        const {UI} = PDFJSAnnotate;
+        UI.fireEvent('showComments',documentId,annotation.uuid);
       });
   }
 
