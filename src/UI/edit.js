@@ -249,7 +249,6 @@ function handleDocumentMouseup(e) {
   }
 
   function calcDelta(x, y) {
-    console.log(scaleDown(svg, {x: overlay.offsetLeft}).x - x);
     //firefox fix for moving offset
     if (isFirefox)
       return {
