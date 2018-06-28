@@ -197,7 +197,7 @@ function handleDocumentMousedown(e) {
   dragStartY = overlay.offsetTop;
 
   overlay.style.background = 'rgba(255, 255, 255, 0.7)';
-  overlay.style.cursor = 'move';
+  overlay.style.cursor = 'grabbing';
   overlay.querySelector('a').style.display = 'none';
 
   document.addEventListener('mousemove', handleDocumentMousemove);
@@ -330,7 +330,7 @@ function handleDocumentMouseup(e) {
         annotation.lines[i][0] = x + deltaX;
         annotation.lines[i][1] = y + deltaY;
       });
-      
+
       target[0].parentNode.removeChild(target[0]);
       appendChild(svg, annotation);
     }
