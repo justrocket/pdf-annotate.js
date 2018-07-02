@@ -197,7 +197,7 @@ function handleDocumentMousedown(e) {
   dragStartY = overlay.offsetTop;
 
   overlay.style.background = 'rgba(255, 255, 255, 0.7)';
-  overlay.style.cursor = 'move';
+  overlay.style.cursor = 'grabbing';
   overlay.querySelector('a').style.display = 'none';
 
   document.addEventListener('mousemove', handleDocumentMousemove);

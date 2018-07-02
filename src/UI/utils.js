@@ -49,11 +49,9 @@ export function findSVGAtPoint(x, y) {
     let rect = el.getBoundingClientRect();
 
     if (pointIntersectsRect(x, y, rect)) {
-
       return el;
     }
   }
-
   return null;
 }
 
@@ -206,7 +204,7 @@ export function getAnnotationRect(el) {
   // I assume that the scale is already being handled
   // natively by virtue of the `transform` attribute.
   if (!['svg', 'g'].includes(el.nodeName.toLowerCase()) || isFirefox) {
-    result = scaleUp(findSVGAtPoint(rect.left, rect.top), result);
+    result = scaleUp(findSVGAtPoint(rect.left + rect.width / 2, rect.top + rect.height / 2), result);
   }
 
   return result;
