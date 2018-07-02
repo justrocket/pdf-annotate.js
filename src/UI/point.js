@@ -79,18 +79,19 @@ function savePoint() {
       })
     );
 
-    PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
-      .then((annotation) => {
-        PDFJSAnnotate.getStoreAdapter().addComment(
-          documentId,
-          annotation.uuid,
-          content
-        );
+      PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
+          .then((annotation) => {
+              PDFJSAnnotate.getStoreAdapter().addComment(
+                  documentId,
+                  annotation.uuid,
+                  content
+              ).then((comment) => {
+                  const {UI} = PDFJSAnnotate;
+                  UI.fireEvent('showComments',documentId,annotation.uuid,comment);
+              });
 
-        appendChild(svg, annotation);
-        const {UI} = PDFJSAnnotate;
-        UI.fireEvent('showComments',documentId,annotation.uuid);
-      });
+              appendChild(svg, annotation);
+          });
   }
 
   closeInput();
