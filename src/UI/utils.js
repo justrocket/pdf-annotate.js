@@ -203,7 +203,7 @@ export function getAnnotationRect(el) {
   // lines or rects no adjustment needs to be made for scale.
   // I assume that the scale is already being handled
   // natively by virtue of the `transform` attribute.
-  if (!['svg', 'g'].includes(el.nodeName.toLowerCase()) || isFirefox) {
+  if (!['g'].includes(el.nodeName.toLowerCase())) {
     result = scaleUp(findSVGAtPoint(rect.left + rect.width / 2, rect.top + rect.height / 2), result);
   }
 
