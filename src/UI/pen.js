@@ -7,6 +7,7 @@ import {
   getMetadata,
   scaleDown
 } from './utils';
+import {annotationAddedEvent} from "./event";
 
 let _enabled = false;
 let _penSize;
@@ -33,7 +34,7 @@ function handleDocumentMousedown() {
 function handleDocumentMouseup(e) {
   let svg;
   if (lines.length > 1 && (svg = findSVGAtPoint(e.clientX, e.clientY))) {
-    let { documentId, pageNumber } = getMetadata(svg);
+    let {documentId, pageNumber} = getMetadata(svg);
 
     PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, {
         type: 'drawing',
@@ -52,6 +53,7 @@ function handleDocumentMouseup(e) {
 
   document.removeEventListener('mousemove', handleDocumentMousemove);
   document.removeEventListener('mouseup', handleDocumentMouseup);
+  document.dispatchEvent(annotationAddedEvent);
 }
 
 /**
@@ -129,7 +131,9 @@ export function setPen(penSize = 1, penColor = '000000') {
  * Enable the pen behavior
  */
 export function enablePen() {
-  if (_enabled) { return; }
+  if (_enabled) {
+    return;
+  }
 
   _enabled = true;
   document.addEventListener('mousedown', handleDocumentMousedown);
@@ -141,7 +145,9 @@ export function enablePen() {
  * Disable the pen behavior
  */
 export function disablePen() {
-  if (!_enabled) { return; }
+  if (!_enabled) {
+    return;
+  }
 
   _enabled = false;
   document.removeEventListener('mousedown', handleDocumentMousedown);

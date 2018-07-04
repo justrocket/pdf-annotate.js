@@ -49,6 +49,8 @@ document.addEventListener('click', function handleDocumentClick(e) {
 //   mouseOverNode = target;
 // });
 
+export const annotationAddedEvent = new Event("AnnotationAdded");
+
 export function fireEvent() {
   emitter.emit(...arguments);
 };

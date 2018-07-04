@@ -6,6 +6,7 @@ import {
   getMetadata,
   scaleDown
 } from './utils';
+import {annotationAddedEvent} from "./event";
 
 let _enabled = false;
 let input;
@@ -19,7 +20,7 @@ function handleDocumentMouseup(e) {
   if (input || !findSVGAtPoint(e.clientX, e.clientY)) {
     return
   }
-  
+
   input = document.createElement('input');
   input.setAttribute('id', 'pdf-annotate-point-input');
   input.setAttribute('placeholder', 'Enter comment');
@@ -70,7 +71,7 @@ function savePoint() {
     }
 
     let rect = svg.getBoundingClientRect();
-    let { documentId, pageNumber } = getMetadata(svg);
+    let {documentId, pageNumber} = getMetadata(svg);
     let annotation = Object.assign({
         type: 'point'
       }, scaleDown(svg, {
@@ -79,22 +80,23 @@ function savePoint() {
       })
     );
 
-      PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
-          .then((annotation) => {
-              PDFJSAnnotate.getStoreAdapter().addComment(
-                  documentId,
-                  annotation.uuid,
-                  content
-              ).then((comment) => {
-                  const {UI} = PDFJSAnnotate;
-                  UI.fireEvent('showComments',documentId,annotation.uuid,comment);
-              });
+    PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
+      .then((annotation) => {
+        PDFJSAnnotate.getStoreAdapter().addComment(
+          documentId,
+          annotation.uuid,
+          content
+        ).then((comment) => {
+          const {UI} = PDFJSAnnotate;
+          UI.fireEvent('showComments', documentId, annotation.uuid, comment);
+        });
 
-              appendChild(svg, annotation);
-          });
+        appendChild(svg, annotation);
+      });
   }
 
   closeInput();
+  document.dispatchEvent(annotationAddedEvent);
 }
 
 /**
@@ -111,7 +113,9 @@ function closeInput() {
  * Enable point annotation behavior
  */
 export function enablePoint() {
-  if (_enabled) { return; }
+  if (_enabled) {
+    return;
+  }
 
   _enabled = true;
   document.addEventListener('mouseup', handleDocumentMouseup);
@@ -121,7 +125,9 @@ export function enablePoint() {
  * Disable point annotation behavior
  */
 export function disablePoint() {
-  if (!_enabled) { return; }
+  if (!_enabled) {
+    return;
+  }
 
   _enabled = false;
   document.removeEventListener('mouseup', handleDocumentMouseup);

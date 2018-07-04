@@ -10,6 +10,8 @@ import {
   scaleDown,
   scaleUp
 } from './utils';
+import {enableEdit} from "./edit";
+import {annotationAddedEvent} from "./event";
 
 let _enabled = false;
 let _type;
@@ -29,12 +31,13 @@ function getSelectionRects() {
     let rects = range.getClientRects();
 
     if (rects.length > 0 &&
-        rects[0].width > 0 &&
-        rects[0].height > 0) {
+      rects[0].width > 0 &&
+      rects[0].height > 0) {
       return rects;
     }
-  } catch (e) {}
-  
+  } catch (e) {
+  }
+
   return null;
 }
 
@@ -60,7 +63,7 @@ function handleDocumentMousedown(e) {
   overlay.style.border = `3px solid ${BORDER_COLOR}`;
   overlay.style.borderRadius = '3px';
   svg.parentNode.appendChild(overlay);
-  
+
   document.addEventListener('mousemove', handleDocumentMousemove);
   disableUserSelect();
 }
@@ -116,6 +119,7 @@ function handleDocumentMouseup(e) {
     document.removeEventListener('mousemove', handleDocumentMousemove);
     enableUserSelect();
   }
+  document.dispatchEvent(annotationAddedEvent);
 }
 
 /**
@@ -181,7 +185,7 @@ function saveRect(type, rects, color) {
       });
     }).filter((r) => r.width > 0 && r.height > 0 && r.x > -1 && r.y > -1)
   };
-  
+
   // Short circuit if no rectangles exist
   if (annotation.rectangles.length === 0) {
     return;
@@ -197,7 +201,7 @@ function saveRect(type, rects, color) {
     annotation.height = rect.height;
   }
 
-  let { documentId, pageNumber } = getMetadata(svg);
+  let {documentId, pageNumber} = getMetadata(svg);
 
   // Add the annotation
   PDFJSAnnotate.getStoreAdapter().addAnnotation(documentId, pageNumber, annotation)
@@ -211,8 +215,10 @@ function saveRect(type, rects, color) {
  */
 export function enableRect(type) {
   _type = type;
-  
-  if (_enabled) { return; }
+
+  if (_enabled) {
+    return;
+  }
 
   _enabled = true;
   document.addEventListener('mouseup', handleDocumentMouseup);
@@ -224,7 +230,9 @@ export function enableRect(type) {
  * Disable rect behavior
  */
 export function disableRect() {
-  if (!_enabled) { return; }
+  if (!_enabled) {
+    return;
+  }
 
   _enabled = false;
   document.removeEventListener('mouseup', handleDocumentMouseup);

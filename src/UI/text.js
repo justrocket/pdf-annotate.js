@@ -6,6 +6,7 @@ import {
   getMetadata,
   scaleDown
 } from './utils';
+import {annotationAddedEvent} from "./event";
 
 let _enabled = false;
 let input;
@@ -71,7 +72,7 @@ function saveText() {
       return;
     }
 
-    let { documentId, pageNumber } = getMetadata(svg);
+    let {documentId, pageNumber} = getMetadata(svg);
     let rect = svg.getBoundingClientRect();
     let annotation = Object.assign({
         type: 'textbox',
@@ -80,7 +81,7 @@ function saveText() {
         content: input.value.trim()
       }, scaleDown(svg, {
         x: clientX - rect.left,
-        y: clientY -  rect.top,
+        y: clientY - rect.top,
         width: input.offsetWidth,
         height: input.offsetHeight
       })
@@ -91,8 +92,9 @@ function saveText() {
         appendChild(svg, annotation);
       });
   }
-  
+
   closeInput();
+  document.dispatchEvent(annotationAddedEvent);
 }
 
 /**
@@ -123,7 +125,9 @@ export function setText(textSize = 12, textColor = '000000') {
  * Enable text behavior
  */
 export function enableText() {
-  if (_enabled) { return; }
+  if (_enabled) {
+    return;
+  }
 
   _enabled = true;
   document.addEventListener('mouseup', handleDocumentMouseup);
@@ -134,7 +138,9 @@ export function enableText() {
  * Disable text behavior
  */
 export function disableText() {
-  if (!_enabled) { return; }
+  if (!_enabled) {
+    return;
+  }
 
   _enabled = false;
   document.removeEventListener('mouseup', handleDocumentMouseup);
