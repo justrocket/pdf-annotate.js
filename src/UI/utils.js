@@ -207,6 +207,13 @@ export function getAnnotationRect(el) {
     result = scaleUp(findSVGAtPoint(rect.left + rect.width / 2, rect.top + rect.height / 2), result);
   }
 
+  if (['text'].includes(el.nodeName.toLowerCase())) {
+      let {viewport} = getMetadata(findSVGAtPoint(rect.left + rect.width / 2, rect.top + rect.height / 2));
+      result.width /= viewport.scale;
+      result.height /= viewport.scale;
+      result.top -= result.height* (1 - viewport.scale);
+  }
+
   return result;
 }
 
