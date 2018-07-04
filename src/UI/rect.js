@@ -94,6 +94,8 @@ function handleDocumentMousemove(e) {
 function handleDocumentMouseup(e) {
   let rects;
   if (_type !== 'area' && (rects = getSelectionRects())) {
+    if (window.getSelection().removeAllRanges)   // Firefox
+      window.getSelection().removeAllRanges();
     let svg = findSVGAtPoint(rects[0].left, rects[0].top);
     saveRect(_type, [...rects].map((r) => {
       return {

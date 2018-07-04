@@ -13,7 +13,7 @@ export default function renderRect(a) {
     let group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     setAttributes(group, {
       fill: normalizeColor(a.color || '#ff0'),
-      fillOpacity: 0.2
+      fillOpacity: 0.5
     });
     
     a.rectangles.forEach((r) => {
