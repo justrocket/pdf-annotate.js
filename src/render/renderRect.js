@@ -15,7 +15,7 @@ export default function renderRect(a) {
       fill: normalizeColor(a.color || '#ff0'),
       fillOpacity: 0.5
     });
-    
+
     a.rectangles.forEach((r) => {
       group.appendChild(createRect(r));
     });
@@ -32,7 +32,7 @@ export default function renderRect(a) {
   }
 }
 
-function createRect(r) {
+export function createRect(r) {
   let rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 
   setAttributes(rect, {
