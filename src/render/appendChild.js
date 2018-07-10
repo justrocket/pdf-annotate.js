@@ -20,7 +20,7 @@ function getTranslation(viewport) {
 
   // Modulus 360 on the rotation so that we only
   // have to worry about four possible values.
-  switch(viewport.rotation % 360) {
+  switch (viewport.rotation % 360) {
     case 0:
       x = y = 0;
       break;
@@ -38,7 +38,7 @@ function getTranslation(viewport) {
       break;
   }
 
-  return { x, y };
+  return {x, y};
 }
 
 /**
@@ -53,7 +53,7 @@ function transform(node, viewport) {
 
   // Let SVG natively transform the element
   node.setAttribute('transform', `scale(${viewport.scale}) rotate(${viewport.rotation}) translate(${trans.x}, ${trans.y})`);
-  
+
   // Manually adjust x/y for nested SVG nodes
   if (!isFirefox && node.nodeName.toLowerCase() === 'svg') {
     node.setAttribute('x', parseInt(node.getAttribute('x'), 10) * viewport.scale);
@@ -65,7 +65,7 @@ function transform(node, viewport) {
     let height = parseInt(node.getAttribute('height'), 10);
     let path = node.querySelector('path');
     let svg = path.parentNode;
-   
+
     // Scale width/height
     [node, svg, path, node.querySelector('rect')].forEach((n) => {
       n.setAttribute('width', parseInt(n.getAttribute('width'), 10) * viewport.scale);
@@ -73,9 +73,9 @@ function transform(node, viewport) {
     });
 
     // Transform path but keep scale at 100% since it will be handled natively
-    transform(path, objectAssign({}, viewport, { scale: 1 }));
-    
-    switch(viewport.rotation % 360) {
+    transform(path, objectAssign({}, viewport, {scale: 1}));
+
+    switch (viewport.rotation % 360) {
       case 90:
         node.setAttribute('x', viewport.width - y - width);
         node.setAttribute('y', x);
@@ -111,7 +111,7 @@ export default function appendChild(svg, annotation, viewport) {
   if (!viewport) {
     viewport = JSON.parse(svg.getAttribute('data-pdf-annotate-viewport'));
   }
-  
+
   let child;
   switch (annotation.type) {
     case 'area':
@@ -140,6 +140,12 @@ export default function appendChild(svg, annotation, viewport) {
     child.setAttribute('data-pdf-annotate-type', annotation.type);
     child.setAttribute('username', annotation.username);
     child.setAttribute('aria-hidden', true);
+
+    if (annotation.type === 'textbox') {
+      Array.prototype.forEach.call(child.children, (childElem => {
+        childElem.setAttribute('data-pdf-annotate-id', annotation.uuid);
+      }));
+    }
 
     svg.appendChild(transform(child, viewport));
   }
