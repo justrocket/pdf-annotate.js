@@ -64,6 +64,26 @@ function handleInputKeyup(e) {
  * Save a text annotation from input
  */
 function saveText() {
+
+  var viewer = document.querySelector("#viewer");
+  var ruler = document.querySelector("#ruler");
+  if (!ruler) {
+    ruler = document.createElement('span');
+    ruler.setAttribute("id", "ruler");
+    ruler.setAttribute('style',
+      'visibility: hidden;' +
+      'white-space: nowrap;' +
+      'position: absolute; top: 0px; left: 0px;');
+    viewer.appendChild(ruler);
+  }
+  ruler.setAttribute('style',
+    'visibility: hidden;' +
+    'white-space: nowrap;' +
+    'position: absolute; top: 0px; left: 0px;' +
+    'font-size: ' + parseInt(_textSize, 10) + 'px;');
+  ruler.innerHTML = input.value.trim();
+  var textWidth = ruler.clientWidth;
+
   if (input.value.trim().length > 0) {
     let clientX = parseInt(input.style.left, 10);
     let clientY = parseInt(input.style.top, 10);
@@ -82,7 +102,7 @@ function saveText() {
       }, scaleDown(svg, {
         x: clientX - rect.left,
         y: clientY - rect.top,
-        width: input.offsetWidth,
+        width: textWidth,
         height: input.offsetHeight
       })
     );
