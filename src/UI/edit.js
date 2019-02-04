@@ -69,7 +69,7 @@ function createEditOverlay(target) {
   overlay.appendChild(anchor);
   parentNode.appendChild(overlay);
   document.addEventListener('click', handleDocumentClick);
-  document.addEventListener('keyup', handleDocumentKeyup);
+  // document.addEventListener('keyup', handleDocumentKeyup);
   document.addEventListener('mousedown', handleDocumentMousedown);
   anchor.addEventListener('click', deleteAnnotation);
   var auth = JSON.parse(localStorage.getItem("auth"));
